@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>MCBE Server Redirection</title>
+    
+    <!-- Meta Tags for SEO -->
+    <meta name="description" content="MCBE Server Redirection tool to add Minecraft Bedrock Edition servers directly to your game.">
+    <meta name="keywords" content="Minecraft, Bedrock Edition, Server, Add Server, MCBE, Redirection">
+    <meta name="author" content="RoffiNeru4K">
+
+    <!-- Open Graph Meta Tags for Social Media Sharing -->
+    <meta property="og:title" content="MCBE Server Redirection">
+    <meta property="og:description" content="Easily add Minecraft Bedrock Edition servers directly from your browser.">
+    <meta property="og:image" content="https://telegra.ph/file/2be4235031c6dbf488fb7.jpg">
+    <meta property="og:url" content="http://localhost/add.html">
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://telegra.ph/file/0a31fc97a8dfbe640d25d.png" type="image/png">
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #1d1d1d;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            background: url('https://telegra.ph/file/2be4235031c6dbf488fb7.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            margin-top: 25px;
+            text-align: center;
+            max-width: 90%;
+            flex: 1;
+        }
+
+        .logo {
+            margin: 0 auto 0px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 90%;
+            max-width: 600px;
+            padding: 15px;
+            border-radius: 30px;
+            border: none;
+            outline: none;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 8px;
+            background-color: #2e2e2e;
+            color: white;
+        }
+
+        button {
+            padding: 10px 100px;
+            border-radius: 10px;
+            border: 2px solid #DC143C;
+            color: #DC143C;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        buttonV2 {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #DC143C;
+            color: #DC143C;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #DC143C;
+        }
+
+        .title {
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .play-prompt {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #2e2e2e;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-top: 0px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .play-prompt img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .prompt-text {
+            flex-grow: 1;
+            margin-left: 10px;
+            text-align: left;
+        }
+
+        .prompt-text p {
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: transparent;
+            font-size: 12px;
+        }
+
+        footer a {
+            color: #DC143C;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .no-download {
+            border-radius: 5px;
+            -webkit-user-drag: none;
+            -webkit-touch-callout: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://telegra.ph/file/0a31fc97a8dfbe640d25d.png" alt="Logo Neru" class="logo no-download">
+        
+        <!-- Input fields dynamically populated from URL parameters -->
+        <input type="text" id="serverName" placeholder="Nama server">
+        <input type="text" id="serverIP" placeholder="IP server">
+        <input type="number" id="serverPort" placeholder="Port (Default 19132)">
+        
+        <button onclick="redirectToMinecraft()">Play</button>
+
+        <div class="title">Server Trending</div>
+        <div class="play-prompt">
+            <img src="https://telegra.ph/file/88766d8a256675d5d290f.jpg" alt="Server Icon" class="no-download">
+            <div class="prompt-text">
+                <strong>VincentSMP</strong>
+                <p>Server berbasis survival Ekonomi dengan berbagai mode.</p>
+            </div>
+            <buttonV2 onclick="window.location.href='minecraft://?addExternalServer=Vincent%20SMP|play.vincentmc.xyz:19132'">Play</buttonV2>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; NeruPoint.games | 2024</p>
+        <p><a href="#">Advertising</a> | <a href="#">API</a> | <a href="#">Channel</a></p>
+    </footer>
+
+    <script>
+        function populateFields() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const srv = urlParams.get('srv');
+
+            if (srv) {
+                let [name, host, port] = srv.split('|');
+
+                if (name) {
+                    document.getElementById('serverName').value = name;
+                }
+                if (host) {
+                    document.getElementById('serverIP').value = host;
+                }
+                document.getElementById('serverPort').value = port || '19132';
+            }
+        }
+
+        function redirectToMinecraft() {
+            const serverName = document.getElementById('serverName').value;
+            const serverIP = document.getElementById('serverIP').value;
+            const serverPort = document.getElementById('serverPort').value || '19132';
+
+            if (serverName && serverIP) {
+                window.location.href = `minecraft://?addExternalServer=${serverName}|${serverIP}:${serverPort}`;
+            } else {
+                alert('Please fill in the server name and IP.');
+            }
+        }
+
+        // Populate fields on page load
+        window.onload = populateFields;
+    </script>
+</body>
+</html>
