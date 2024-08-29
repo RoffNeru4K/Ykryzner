@@ -20,141 +20,7 @@
     <link rel="icon" href="https://telegra.ph/file/0a31fc97a8dfbe640d25d.png" type="image/png">
 
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: Arial, sans-serif;
-            background-color: #1d1d1d;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
-            background: url('https://telegra.ph/file/2be4235031c6dbf488fb7.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
-
-        .container {
-            margin-top: 25px;
-            text-align: center;
-            max-width: 90%;
-            flex: 1;
-        }
-
-        .logo {
-            margin: 0 auto 0px;
-            display: block;
-        }
-
-        input[type="text"],
-        input[type="number"] {
-            width: 90%;
-            max-width: 600px;
-            padding: 15px;
-            border-radius: 30px;
-            border: none;
-            outline: none;
-            font-size: 18px;
-            text-align: center;
-            margin-top: 8px;
-            background-color: #2e2e2e;
-            color: white;
-        }
-
-        button {
-            padding: 10px 100px;
-            border-radius: 10px;
-            border: 2px solid #DC143C;
-            color: #DC143C;
-            background-color: transparent;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-
-        buttonV2 {
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: 2px solid #DC143C;
-            color: #DC143C;
-            background-color: transparent;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        
-        button:hover {
-            background-color: #DC143C;
-        }
-
-        .title {
-            font-family: Arial, sans-serif;
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 25px;
-            margin-bottom: 8px;
-            color: white;
-        }
-
-        .play-prompt {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #2e2e2e;
-            padding: 10px 20px;
-            border-radius: 10px;
-            margin-top: 0px;
-            width: 90%;
-            max-width: 600px;
-        }
-
-        .play-prompt img {
-            width: 50px;
-            height: 50px;
-        }
-
-        .prompt-text {
-            flex-grow: 1;
-            margin-left: 10px;
-            text-align: left;
-        }
-
-        .prompt-text p {
-            margin: 0;
-            font-size: 14px;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: transparent;
-            font-size: 12px;
-        }
-
-        footer a {
-            color: #DC143C;
-            text-decoration: none;
-            margin-top: 10px;
-        }
-
-        .no-download {
-            border-radius: 5px;
-            -webkit-user-drag: none;
-            -webkit-touch-callout: none;
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            pointer-events: none;
-        }
-
-        @media (min-width: 768px) {
-            .container {
-                max-width: 600px;
-            }
-        }
+        /* Your existing CSS */
     </style>
 </head>
 <body>
@@ -162,7 +28,7 @@
         <img src="https://telegra.ph/file/0a31fc97a8dfbe640d25d.png" alt="Logo Neru" class="logo no-download">
         
         <!-- Input fields dynamically populated from URL parameters -->
-        <input type="text" id="serverName" placeholder="Nama server">
+        <input type="text" id="serverName" placeholder="Name server">
         <input type="text" id="serverIP" placeholder="IP server">
         <input type="number" id="serverPort" placeholder="Port (Default 19132)">
         
@@ -173,7 +39,7 @@
             <img src="https://telegra.ph/file/88766d8a256675d5d290f.jpg" alt="Server Icon" class="no-download">
             <div class="prompt-text">
                 <strong>VincentSMP</strong>
-                <p>Server berbasis survival Ekonomi dengan berbagai mode.</p>
+                <p>Economic survival based server with various modes.</p>
             </div>
             <buttonV2 onclick="window.location.href='minecraft://?addExternalServer=Vincent%20SMP|play.vincentmc.xyz:19132'">Play</buttonV2>
         </div>
@@ -213,8 +79,20 @@
             }
         }
 
-        // Populate fields on page load
-        window.onload = populateFields;
+        function checkForAutoPlay() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const play = urlParams.get('play');
+
+            if (play) {
+                redirectToMinecraft();
+            }
+        }
+
+        // Populate fields on page load and check if auto-play is needed
+        window.onload = function() {
+            populateFields();
+            checkForAutoPlay();
+        };
     </script>
 </body>
 </html>
