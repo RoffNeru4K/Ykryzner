@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+        }
+
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #333;
+            border: 1px solid #555;
+        }
+
+        #container {
+            width: 100%;
+            overflow-y: auto;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Disable horizontal scroll, but allow vertical scroll */
+        html, body {
+            overflow-x: hidden;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Page Image Viewer</h1>
+    
+    <label for="min">Min Page:</label>
+    <input type="number" id="min" placeholder="Min Page">
+    
+    <label for="max">Max Page:</label>
+    <input type="number" id="max" placeholder="Max Page">
+    
+    <label for="url">URL Template (use {page}):</label>
+    <input type="text" id="url" placeholder="https://page.com/{page}">
+    
+    <button id="loadImages">Load Images</button>
+
+    <div id="container"></div>
+
+    <script>
+        let currentPage = 1;
+        let maxPage = 1;
+        let container = document.getElementById('container');
+
+        // Disable horizontal scroll
+        document.addEventListener('touchmove', function(e) {
+            if (e.scale !== 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Load images vertically from min to max
+        document.getElementById('loadImages').addEventListener('click', () => {
+            container.innerHTML = ''; // Clear previous images
+            const min = parseInt(document.getElementById('min').value);
+            maxPage = parseInt(document.getElementById('max').value);
+            const urlTemplate = document.getElementById('url').value;
+
+            if (isNaN(min) || isNaN(maxPage) || !urlTemplate.includes('{page}')) {
+                alert("Please enter valid inputs.");
+                return;
+            }
+
+            for (let i = min; i <= maxPage; i++) {
+                const imgUrl = urlTemplate.replace('{page}', i);
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.loading = 'lazy'; // Lazy loading for performance
+                img.setAttribute('data-page', i); // Set page for reference
+                container.appendChild(img);
+            }
+
+            currentPage = min;
+        });
+
+        // Right-click to go to the next page
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault(); // Prevent default right-click menu
+            if (currentPage < maxPage) {
+                currentPage++;
+                window.scrollTo(0, document.querySelector(`img[data-page="${currentPage}"]`).offsetTop);
+            }
+        });
+
+        // Prevent right-click after max page is reached
+        document.addEventListener('click', (e) => {
+            if (e.button === 2 && currentPage >= maxPage) {
+                e.preventDefault();
+            }
+        });
+
+        // Register the service worker for caching
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(registration => {
+                    console.log('ServiceWorker registered: ', registration);
+                }).catch(error => {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
