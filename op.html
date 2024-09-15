@@ -28,6 +28,7 @@
         #container {
             width: 100%;
             overflow-y: auto;
+            max-height: 80vh; /* Adjust as needed to allow vertical scrolling */
         }
 
         img {
@@ -40,7 +41,6 @@
         /* Disable horizontal scroll, but allow vertical scroll */
         html, body {
             overflow-x: hidden;
-            user-select: none;
         }
     </style>
 </head>
@@ -64,13 +64,6 @@
         let currentPage = 1;
         let maxPage = 1;
         let container = document.getElementById('container');
-
-        // Disable horizontal scroll
-        document.addEventListener('touchmove', function(e) {
-            if (e.scale !== 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
 
         // Load images vertically from min to max
         document.getElementById('loadImages').addEventListener('click', () => {
