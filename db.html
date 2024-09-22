@@ -1,168 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Danbooru-like Page</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background-color: #2b2b2b;
-      color: #f1f1f1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      padding: 10px;
-      background-color: #1b1b1b;
-      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    }
-    header img {
-      height: 40px;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-    #back-btn {
-      background-color: #333;
-      color: #f1f1f1;
-      border: none;
-      padding: 8px 16px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    #back-btn:hover {
-      background-color: #444;
-    }
-    main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 20px;
-      max-width: 600px;
-      width: 100%;
-    }
-    .image-container {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .image-container img, .image-container video {
-      max-width: 100%;
-      height: auto;
-      border-radius: 10px;
-    }
-    .comment {
-      font-size: 18px;
-      font-style: italic;
-      margin-bottom: 10px;
-    }
-    .tags {
-      font-size: 14px;
-      background-color: #333;
-      padding: 10px;
-      border-radius: 5px;
-      width: 100%;
-    }
-    .tags span {
-      display: block;
-      margin-bottom: 5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danbooru-like Post Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        header {
+            width: 100%;
+            background-color: #333;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #555;
+        }
+        header h1 {
+            font-size: 1.5rem;
+        }
+        .back-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .container {
+            margin-top: 20px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+        .media-container {
+            margin-bottom: 20px;
+        }
+        .media-container img, .media-container video {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .author-comment {
+            margin: 10px 0;
+            font-size: 1.2rem;
+            color: #ff4d4d;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .tag {
+            background-color: #444;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <img src="logo.png" alt="Logo">
     <h1>Danbooru Clone</h1>
-  </div>
-  <button id="back-btn" onclick="goBack()">Back to Home</button>
+    <a href="/" class="back-button">Back</a>
 </header>
 
-<main>
-  <div class="image-container" id="media-container"></div>
-  <div class="comment">Author: Neru4K</div>
-  <div class="tags" id="tags-container"></div>
-</main>
+<div class="container">
+    <div class="media-container" id="media-container"></div>
+    <div class="author-comment">Neru4K</div>
+    <div class="tags" id="tags-container"></div>
+</div>
 
 <script>
-  // Function to go back to home page
-  function goBack() {
-    window.location.href = "/";
-  }
-
-  // Get the post ID from the URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const postId = urlParams.get('id');
-
-  // Fetch the post data from the server
-  async function fetchPostData() {
-    try {
-      const response = await fetch(`http://159.65.141.225:3374/posts?id=${postId}`);
-      const data = await response.json();
-
-      // Display media (image or video)
-      const mediaContainer = document.getElementById('media-container');
-      if (data.imageUrl.endsWith('.jpg') || data.imageUrl.endsWith('.png') || data.imageUrl.endsWith('.gif')) {
-        const img = document.createElement('img');
-        img.src = data.imageUrl;
-        mediaContainer.appendChild(img);
-      } else if (data.imageUrl.endsWith('.webm') || data.imageUrl.endsWith('.mp4')) {
-        const video = document.createElement('video');
-        video.src = data.imageUrl;
-        video.controls = true;
-        mediaContainer.appendChild(video);
-      }
-
-      // Display tags
-      const tagsContainer = document.getElementById('tags-container');
-      if (data.rating) {
-        const ratingTag = document.createElement('span');
-        ratingTag.textContent = `Rating: ${data.rating}`;
-        tagsContainer.appendChild(ratingTag);
-      }
-      if (data.artist && data.artist.length > 0) {
-        const artistTag = document.createElement('span');
-        artistTag.textContent = `Artist: ${data.artist.join(', ')}`;
-        tagsContainer.appendChild(artistTag);
-      }
-      if (data.characters && data.characters.length > 0) {
-        const charactersTag = document.createElement('span');
-        charactersTag.textContent = `Characters: ${data.characters.join(', ')}`;
-        tagsContainer.appendChild(charactersTag);
-      }
-      if (data.copyright && data.copyright.length > 0) {
-        const copyrightTag = document.createElement('span');
-        copyrightTag.textContent = `Copyright: ${data.copyright.join(', ')}`;
-        tagsContainer.appendChild(copyrightTag);
-      }
-      if (data.meta && data.meta.length > 0) {
-        const metaTag = document.createElement('span');
-        metaTag.textContent = `Meta: ${data.meta.join(', ')}`;
-        tagsContainer.appendChild(metaTag);
-      }
-      if (data.general && data.general.length > 0) {
-        const generalTag = document.createElement('span');
-        generalTag.textContent = `Tags: ${data.general.join(', ')}`;
-        tagsContainer.appendChild(generalTag);
-      }
-    } catch (error) {
-      console.error('Error fetching post data:', error);
+    const params = new URLSearchParams(window.location.search);
+    const postId = params.get('id');
+    
+    async function fetchPostData() {
+        try {
+            const response = await fetch(`http://159.65.141.225:3374/posts?id=${postId}`);
+            const postData = await response.json();
+            displayPost(postData);
+        } catch (error) {
+            console.error('Error fetching post data:', error);
+        }
     }
-  }
 
-  // Fetch post data on page load
-  window.onload = fetchPostData;
+    function displayPost(post) {
+        const mediaContainer = document.getElementById('media-container');
+        const tagsContainer = document.getElementById('tags-container');
+        
+        // Display image or video
+        if (post.imageUrl) {
+            const ext = post.imageUrl.split('.').pop();
+            if (ext === 'webm' || ext === 'mp4') {
+                const videoElement = document.createElement('video');
+                videoElement.src = post.imageUrl;
+                videoElement.controls = true;
+                mediaContainer.appendChild(videoElement);
+            } else {
+                const imgElement = document.createElement('img');
+                imgElement.src = post.imageUrl;
+                mediaContainer.appendChild(imgElement);
+            }
+        }
+        
+        // Display tags
+        const tagCategories = ['rating', 'artist', 'characters', 'copyright', 'general', 'meta'];
+        tagCategories.forEach(category => {
+            if (post[category]) {
+                const tags = Array.isArray(post[category]) ? post[category] : [post[category]];
+                tags.forEach(tag => {
+                    const tagElement = document.createElement('div');
+                    tagElement.className = 'tag';
+                    tagElement.textContent = tag;
+                    tagsContainer.appendChild(tagElement);
+                });
+            }
+        });
+    }
+
+    fetchPostData();
 </script>
 
 </body>
