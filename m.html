@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Photo Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #gallery {
+            text-align: center;
+        }
+
+        #gallery div {
+            display: inline-block;
+            margin: 10px;
+            vertical-align: top;
+            cursor: pointer;
+        }
+
+        #gallery img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px;
+        }
+
+        #info {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Photo Gallery</h1>
+    <div id="gallery"></div>
+
+    <script>
+        // URL JSON data
+        const jsonUrl = 'https://raw.githubusercontent.com/RoffNeru4K/PianZ/main/output.json';
+
+        // Fetch and display gallery items
+        fetch(jsonUrl)
+            .then(response => response.json())
+            .then(data => {
+                const gallery = document.getElementById('gallery');
+                Object.keys(data).forEach(key => {
+                    const item = data[key];
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <a href="detail.html?id=${item.id}">
+                            <img src="${item.imageUrl}" alt="Image">
+                        </a>
+                        <p>ID: ${item.id}</p>
+                        <p>Artist: ${item.artist.join(', ')}</p>
+                        <p>Characters: ${item.characters.join(', ')}</p>
+                        <p>Rating: ${item.rating}</p>
+                    `;
+                    gallery.appendChild(div);
+                });
+            })
+            .catch(error => console.error('Error loading JSON data:', error));
+    </script>
+</body>
+</html>
