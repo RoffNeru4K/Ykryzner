@@ -1,0 +1,22 @@
+{
+  "group1": {
+    "id": "12345", 
+    "Url-Profile": "https://example.com/images/group1.png",
+    "deskripsi": "Group ini adalah tempat berdiskusi tentang teknologi terkini."
+  },
+  "group2": {
+    "id": "67890", 
+    "Url-Profile": "https://example.com/images/group2.png",
+    "deskripsi": "Group ini adalah komunitas penggemar musik dan seni."
+  },
+  "group3": {
+    "id": "54321", 
+    "Url-Profile": "https://example.com/images/group3.png",
+    "deskripsi": "Group ini fokus pada topik bisnis dan wirausaha."
+  },
+  "group4": {
+    "id": "98765", 
+    "Url-Profile": "https://example.com/images/group4.png",
+    "deskripsi": "Komunitas game, tempat berkumpulnya para gamer dari seluruh dunia."
+  }
+}
