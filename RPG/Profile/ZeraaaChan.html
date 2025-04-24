@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Android-Friendly RPG Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #000;
+      --fg: #fff;
+      --accent: #d0b5d3; /* ganti tema merah */
+      --bar-bg: #222;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto Mono', monospace;
+      background: var(--bg);
+      color: var(--fg);
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .header img {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      margin-right: 1rem;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
+    .bars {
+      margin: 1rem 0;
+    }
+    .bar {
+      margin-bottom: 0.75rem;
+    }
+    .bar-label {
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      display: flex; justify-content: space-between;
+    }
+    .bar-bg {
+      width: 100%;
+      background: var(--bar-bg);
+      border-radius: 0.5rem;
+      overflow: hidden;
+      height: 12px;
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .card {
+      background: #111;
+      padding: 0.75rem;
+      border: 1px solid #222;
+      border-radius: 0.5rem;
+      text-align: center;
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    .card p {
+      font-size: 0.9rem;
+    }
+    .charts {
+      margin-top: 1rem;
+    }
+    .chart-card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    canvas {
+      width: 100% !important;
+      height: 200px !important;
+    }
+    @media (min-width: 600px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://i.pinimg.com/736x/ab/1f/a5/ab1fa5304ccc0cb3003c1252a6113dc4.jpg" alt="PFP"/>
+      <h1>Zeraaa-Chan</h1>
+    </div>
+
+    <!-- Status Bars -->
+    <div class="bars">
+      <div class="bar">
+        <div class="bar-label"><span>Health</span><span id="health-val">85%</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="health-bar"></div></div>
+      </div>
+      <div class="bar">
+        <div class="bar-label"><span>Stamina</span><span id="stam-val">75%</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="stam-bar"></div></div>
+      </div>
+      <div class="bar">
+        <div class="bar-label"><span>XP</span><span id="xp-val">45%</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="xp-bar"></div></div>
+      </div>
+    </div>
+
+    <!-- Core Stats Grid -->
+    <div class="grid">
+      <div class="card"><h2>Level</h2><p id="level-val">12</p></div>
+      <div class="card"><h2>Attack</h2><p id="attack-val">150</p></div>
+      <div class="card"><h2>Defense</h2><p id="defense-val">100</p></div>
+      <div class="card"><h2>Basic ATK DMG</h2><p id="basic-dmg-val">250</p></div>
+      <div class="card"><h2>Ult DMG</h2><p id="ult-dmg-val">800</p></div>
+      <div class="card"><h2>Heal/turn</h2><p id="recovery-val">30</p></div>
+      <div class="card"><h2>Buff</h2><p id="buff-val">+15%</p></div>
+      <div class="card"><h2>Crit Rate</h2><p id="crit-rate-val">20%</p></div>
+      <div class="card"><h2>Crit DMG</h2><p id="crit-dmg-val">150%</p></div>
+    </div>
+
+    <!-- Resource Stats -->
+    <div class="grid">
+      <div class="card"><h2>Credits</h2><p id="credit-val">10,000</p></div>
+      <div class="card"><h2>Jade</h2><p id="jade-val">0</p></div>
+      <div class="card"><h2>Pass</h2><p id="pass-val">0</p></div>
+      <div class="card"><h2>Special</h2><p id="spec-val">0</p></div>
+    </div>
+
+    <!-- Gameplay Graphs -->
+    <div class="charts">
+      <div class="chart-card">
+        <h2 style="color: var(--accent); margin-bottom:0.5rem;">Gameplay Overview</h2>
+        <canvas id="gameplay-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Stats data termasuk progress untuk chart
+    const stats = {
+      health: 85,
+      stamina: 75,
+      xp: 45,
+      level: 12,
+      attack: 150,
+      defense: 100,
+      basicDmg: 250,
+      ultDmg: 800,
+      recovery: 30,
+      buff: 15,
+      critRate: 20,
+      critDmg: 150,
+      credit: 10000,
+      jade: 0,
+      pass: 0,
+      special: 0,
+      kills: 0,
+      exploration: 0,
+      quests: 0,
+      bosses: 0
+    };
+
+    // Inisialisasi bar dan nilai
+    function updateBars() {
+      document.getElementById('health-bar').style.width = stats.health + '%';
+      document.getElementById('stam-bar').style.width = stats.stamina + '%';
+      document.getElementById('xp-bar').style.width = stats.xp + '%';
+      document.getElementById('health-val').textContent = stats.health.toFixed(0) + '%';
+      document.getElementById('stam-val').textContent = stats.stamina.toFixed(0) + '%';
+      document.getElementById('xp-val').textContent = stats.xp.toFixed(0) + '%';
+      document.getElementById('level-val').textContent = stats.level;
+      document.getElementById('attack-val').textContent = stats.attack;
+      document.getElementById('defense-val').textContent = stats.defense;
+      document.getElementById('basic-dmg-val').textContent = stats.basicDmg;
+      document.getElementById('ult-dmg-val').textContent = stats.ultDmg;
+      document.getElementById('recovery-val').textContent = stats.recovery;
+      document.getElementById('buff-val').textContent = `+${stats.buff}%`;
+      document.getElementById('crit-rate-val').textContent = `${stats.critRate}%`;
+      document.getElementById('crit-dmg-val').textContent = `${stats.critDmg}%`;
+      document.getElementById('credit-val').textContent = stats.credit.toLocaleString();
+      document.getElementById('jade-val').textContent = stats.jade;
+      document.getElementById('pass-val').textContent = stats.pass;
+      document.getElementById('spec-val').textContent = stats.special;
+    }
+
+    // Setup chart
+    const ctx = document.getElementById('gameplay-chart').getContext('2d');
+    const gameplayChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Kills', 'Exploration', 'Quests', 'Bosses'],
+        datasets: [{
+          label: 'Progress %',
+          data: [0, 0, 0, 0],
+          backgroundColor: 'rgba(208,181,211,0.8)',
+          borderColor: 'rgba(208,181,211,1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    // Fungsi simulasi update data setiap 2 detik
+    function simulate() {
+      // Health & Stamina turun, mungkin recovery kecil
+      stats.health = Math.max(0, stats.health - (Math.random() * 3));
+      stats.stamina = Math.min(100, Math.max(0, stats.stamina - (Math.random() * 4) + (Math.random() * 2)));
+
+      // XP naik, jika cap -> level up
+      stats.xp += Math.random() * 10;
+      if (stats.xp >= 100) {
+        stats.level += 1;
+        stats.xp -= 100;
+      }
+
+      // Progress chart
+      stats.kills = Math.min(100, stats.kills + (Math.random() * 2));
+      stats.exploration = Math.min(100, stats.exploration + (Math.random() * 1.5));
+      stats.quests = Math.min(100, stats.quests + (Math.random() * 1));
+      stats.bosses = Math.min(100, stats.bosses + (Math.random() * 0.5));
+
+      // Update nilai & chart
+      updateBars();
+      gameplayChart.data.datasets[0].data = [
+        stats.kills,
+        stats.exploration,
+        stats.quests,
+        stats.bosses
+      ];
+      gameplayChart.update();
+    }
+
+    // Inisialisasi dan loop simulasi
+    updateBars();
+    simulate();
+    setInterval(simulate, 2000);
+  </script>
+</body>
+</html>
